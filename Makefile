@@ -1,5 +1,10 @@
 VERSION?=0.0.0
 BUILDROOT?=/etc/mock/default.cfg
+SELINUXTYPE?=targeted
+
+PREFIX?=/usr/local
+DATADIR?=$(PREFIX)/share
+INSTALL?=install
 
 .PHONY: build
 build: build-py
@@ -65,6 +70,18 @@ rpm: build tarball srpm
 		--resultdir "rpm/" \
 		rpm/insights-ansible-playbook-verifier-*.src.rpm
 
+.PHONY: selinux-policy
+selinux-policy:
+	$(MAKE) -C python/selinux -f /usr/share/selinux/devel/Makefile insights_ansible_playbook_verifier.pp
+	bzip2 -9 python/selinux/insights_ansible_playbook_verifier.pp
+
+.PHONY: install
+install: install-selinux-policy
+
+.PHONY: install-selinux-policy
+install-selinux-policy: selinux-policy
+	install -D -m 0644 python/selinux/insights_ansible_playbook_verifier.pp.bz2 $(DESTDIR)$(DATADIR)/selinux/packages/$(SELINUXTYPE)/insights_ansible_playbook_verifier.pp.bz2
+	install -D -p -m 0644 python/selinux/insights_ansible_playbook_verifier.if $(DESTDIR)$(DATADIR)/selinux/devel/include/distributed/insights_ansible_playbook_verifier.if
 
 .PHONY: clean
 clean: clean-rpm
@@ -72,3 +89,8 @@ clean: clean-rpm
 .PHONY: clean-rpm
 clean-rpm:
 	rm -f rpm/*
+
+.PHONY: clean-selinux-policy
+clean-selinux-policy:
+	rm -f python/selinux/insights_ansible_playbook_verifier.pp.bz2
+	rm -rf python/selinux/tmp/

@@ -1,0 +1,44 @@
+policy_module(insights_ansible_playbook_verifier, 1.0.0)
+
+########################################
+#
+# Declarations
+#
+
+attribute_role insights_ansible_playbook_verifier_roles;
+roleattribute system_r insights_ansible_playbook_verifier_roles;
+
+type insights_ansible_playbook_verifier_t;
+type insights_ansible_playbook_verifier_exec_t;
+userdom_user_application_domain(insights_ansible_playbook_verifier_t, insights_ansible_playbook_verifier_exec_t)
+role insights_ansible_playbook_verifier_roles types insights_ansible_playbook_verifier_t;
+
+type insights_ansible_playbook_verifier_var_lib_t;
+files_type(insights_ansible_playbook_verifier_var_lib_t)
+
+########################################
+#
+# insights_ansible_playbook_verifier local policy
+#
+
+allow insights_ansible_playbook_verifier_t self:fifo_file manage_fifo_file_perms;
+allow insights_ansible_playbook_verifier_t self:unix_stream_socket create_stream_socket_perms;
+
+can_exec(insights_ansible_playbook_verifier_t, insights_ansible_playbook_verifier_exec_t)
+
+manage_dirs_pattern(insights_ansible_playbook_verifier_t, insights_ansible_playbook_verifier_var_lib_t, insights_ansible_playbook_verifier_var_lib_t)
+manage_files_pattern(insights_ansible_playbook_verifier_t, insights_ansible_playbook_verifier_var_lib_t, insights_ansible_playbook_verifier_var_lib_t)
+files_var_lib_filetrans(insights_ansible_playbook_verifier_t, insights_ansible_playbook_verifier_var_lib_t, { dir file })
+
+corecmd_exec_bin(insights_ansible_playbook_verifier_t)
+
+domain_use_interactive_fds(insights_ansible_playbook_verifier_t)
+
+files_read_etc_files(insights_ansible_playbook_verifier_t)
+
+miscfiles_read_localization(insights_ansible_playbook_verifier_t)
+
+optional_policy(`
+	gpg_domtrans(insights_ansible_playbook_verifier_t)
+	gpg_manage_admin_home_content(insights_ansible_playbook_verifier_t)
+')

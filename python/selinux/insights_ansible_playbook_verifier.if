@@ -1,0 +1,95 @@
+
+## <summary>policy for insights_ansible_playbook_verifier</summary>
+
+########################################
+## <summary>
+##	Execute insights_ansible_playbook_verifier_exec_t in the insights_ansible_playbook_verifier domain.
+## </summary>
+## <param name="domain">
+## <summary>
+##	Domain allowed to transition.
+## </summary>
+## </param>
+#
+interface(`insights_ansible_playbook_verifier_domtrans',`
+	gen_require(`
+		type insights_ansible_playbook_verifier_t, insights_ansible_playbook_verifier_exec_t;
+	')
+
+	corecmd_search_bin($1)
+	domtrans_pattern($1, insights_ansible_playbook_verifier_exec_t, insights_ansible_playbook_verifier_t)
+')
+
+######################################
+## <summary>
+##	Execute insights_ansible_playbook_verifier in the caller domain.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`insights_ansible_playbook_verifier_exec',`
+	gen_require(`
+		type insights_ansible_playbook_verifier_exec_t;
+	')
+
+	corecmd_search_bin($1)
+	can_exec($1, insights_ansible_playbook_verifier_exec_t)
+')
+
+########################################
+## <summary>
+##	Execute insights_ansible_playbook_verifier in the insights_ansible_playbook_verifier domain, and
+##	allow the specified role the insights_ansible_playbook_verifier domain.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed to transition
+##	</summary>
+## </param>
+## <param name="role">
+##	<summary>
+##	The role to be allowed the insights_ansible_playbook_verifier domain.
+##	</summary>
+## </param>
+#
+interface(`insights_ansible_playbook_verifier_run',`
+	gen_require(`
+		type insights_ansible_playbook_verifier_t;
+		attribute_role insights_ansible_playbook_verifier_roles;
+	')
+
+	insights_ansible_playbook_verifier_domtrans($1)
+	roleattribute $2 insights_ansible_playbook_verifier_roles;
+')
+
+########################################
+## <summary>
+##	Role access for insights_ansible_playbook_verifier
+## </summary>
+## <param name="role">
+##	<summary>
+##	Role allowed access
+##	</summary>
+## </param>
+## <param name="domain">
+##	<summary>
+##	User domain for the role
+##	</summary>
+## </param>
+#
+interface(`insights_ansible_playbook_verifier_role',`
+	gen_require(`
+		type insights_ansible_playbook_verifier_t;
+		attribute_role insights_ansible_playbook_verifier_roles;
+	')
+
+	roleattribute $1 insights_ansible_playbook_verifier_roles;
+
+	insights_ansible_playbook_verifier_domtrans($2)
+
+	ps_process_pattern($2, insights_ansible_playbook_verifier_t)
+	allow $2 insights_ansible_playbook_verifier_t:process { signull signal sigkill };
+')

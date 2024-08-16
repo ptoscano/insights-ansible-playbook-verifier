@@ -1,0 +1,3 @@
+/usr/libexec/insights-ansible-playbook-verifier		--	gen_context(system_u:object_r:insights_ansible_playbook_verifier_exec_t,s0)
+
+/var/lib/insights-ansible-playbook-verifier(/.*)?		gen_context(system_u:object_r:insights_ansible_playbook_verifier_var_lib_t,s0)

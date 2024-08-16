@@ -8,3 +8,5 @@ build/
 htmlcov
 # RPM builds
 rpm/
+# SELinux policy
+python/selinux/insights_ansible_playbook_verifier.pp*
